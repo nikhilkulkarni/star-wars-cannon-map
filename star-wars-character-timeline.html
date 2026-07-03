@@ -65,16 +65,16 @@
       padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border); background: rgba(255,255,255,.02);
     }
     .toolbar p { margin: 0; color: var(--muted); font-size: var(--text-sm); max-width: 70ch; }
-    .viewport { overflow-x: auto; overflow-y: hidden; }
-    .chart { min-width: 1680px; padding: var(--space-5); }
-    .axis, .era-grid, .rows { display: grid; grid-template-columns: 240px repeat(51, 26px); column-gap: 0; }
-    .axis { position: sticky; top: 0; z-index: 3; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+    .viewport { overflow: auto; max-height: 72vh; position: relative; isolation: isolate; }
+    .chart { min-width: 1680px; padding: 0 0 var(--space-5) 0; position: relative; }
+    .axis, .era-grid, .rows { display: grid; grid-template-columns: 240px repeat(136, 26px); column-gap: 0; width: max-content; }
+    .axis { position: sticky; top: 0; z-index: 30; background: var(--surface-2); border-bottom: 1px solid var(--border); }
     .axis .label-cell, .axis .year-cell {
       padding: .75rem .4rem; font-size: var(--text-xs); color: var(--muted); border-right: 1px solid rgba(255,255,255,.05);
     }
-    .label-cell { position: sticky; left: 0; z-index: 4; background: var(--surface-2); border-right: 1px solid var(--border); }
+    .label-cell { position: sticky; left: 0; z-index: 60; background: var(--surface-2); border-right: 1px solid var(--border); box-shadow: 10px 0 18px rgba(0,0,0,.22); }
     .year-cell { text-align: center; }
-    .era-grid { position: relative; }
+    .era-grid { position: sticky; top: 39px; z-index: 25; background: var(--surface-2); }
     .era-label {
       position: relative; padding: .7rem .9rem; font-size: var(--text-sm); color: var(--text);
       border-right: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid var(--border);
@@ -91,8 +91,8 @@
     }
     .rows { min-height: 0; }
     .name-cell {
-      position: sticky; left: 0; z-index: 2; background: var(--surface); border-right: 1px solid var(--border);
-      border-bottom: 1px solid rgba(255,255,255,.05); padding: .9rem 1rem;
+      position: sticky; left: 0; z-index: 50; background: var(--surface); border-right: 1px solid var(--border);
+      border-bottom: 1px solid rgba(255,255,255,.05); padding: .9rem 1rem; box-shadow: 10px 0 18px rgba(0,0,0,.18);
     }
     .name { font-weight: 700; color: var(--text); }
     .meta { font-size: var(--text-xs); color: var(--muted); }
@@ -100,6 +100,7 @@
       height: 54px; border-right: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid rgba(255,255,255,.05);
       position: relative; background-image: linear-gradient(to bottom, rgba(255,255,255,.015), rgba(255,255,255,0));
     }
+    .rows:first-of-type .name-cell, .rows:first-of-type .cell { border-top: 1px solid rgba(255,255,255,.05); }
     .lifeline {
       position: absolute; top: 10px; height: 34px; border-radius: 999px; display: flex; align-items: center;
       padding: 0 12px; font-size: 12px; font-weight: 700; color: #111; white-space: nowrap;
