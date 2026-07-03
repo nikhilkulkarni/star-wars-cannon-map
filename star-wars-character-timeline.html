@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Star Wars Character Timeline</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem;
+      --font-display: 'Cabinet Grotesk', 'Inter', sans-serif;
+      --font-body: 'Satoshi', 'Inter', sans-serif;
+      --bg: #171614; --surface: #1c1b19; --surface-2: #201f1d; --border: #393836;
+      --text: #cdccca; --muted: #979590; --faint: #6f6d69; --primary: #4f98a3;
+      --high-republic: #6daa45; --republic: #5591c7; --empire: #dd6974; --rebellion: #e8af34;
+      --new-republic: #4f98a3; --first-order: #a86fdf;
+      --shadow: 0 12px 32px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; font-family: var(--font-body); font-size: var(--text-base);
+      color: var(--text); background:
+        radial-gradient(circle at top right, rgba(79,152,163,.10), transparent 30%),
+        radial-gradient(circle at top left, rgba(168,111,223,.08), transparent 28%),
+        var(--bg);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 1480px; margin: 0 auto; padding: var(--space-8); }
+    .hero { padding: var(--space-10) 0 var(--space-8); }
+    .eyebrow {
+      display: inline-block; padding: .35rem .7rem; border: 1px solid var(--border); border-radius: 999px;
+      color: var(--primary); background: rgba(79,152,163,.08); font-size: var(--text-xs); letter-spacing: .08em; text-transform: uppercase;
+    }
+    h1 {
+      font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1; margin: var(--space-4) 0 var(--space-4);
+      max-width: 14ch;
+    }
+    .lede { max-width: 78ch; color: var(--muted); }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6);
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: .55rem; padding: .5rem .8rem; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: var(--text-sm);
+    }
+    .dot { width: .8rem; height: .8rem; border-radius: 50%; display: inline-block; }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .timeline-shell { margin-top: var(--space-8); }
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: var(--space-4);
+      padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border); background: rgba(255,255,255,.02);
+    }
+    .toolbar p { margin: 0; color: var(--muted); font-size: var(--text-sm); max-width: 70ch; }
+    .viewport { overflow-x: auto; overflow-y: hidden; }
+    .chart { min-width: 1680px; padding: var(--space-5); }
+    .axis, .era-grid, .rows { display: grid; grid-template-columns: 240px repeat(51, 26px); column-gap: 0; }
+    .axis { position: sticky; top: 0; z-index: 3; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+    .axis .label-cell, .axis .year-cell {
+      padding: .75rem .4rem; font-size: var(--text-xs); color: var(--muted); border-right: 1px solid rgba(255,255,255,.05);
+    }
+    .label-cell { position: sticky; left: 0; z-index: 4; background: var(--surface-2); border-right: 1px solid var(--border); }
+    .year-cell { text-align: center; }
+    .era-grid { position: relative; }
+    .era-label {
+      position: relative; padding: .7rem .9rem; font-size: var(--text-sm); color: var(--text);
+      border-right: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid var(--border);
+    }
+    .era-label strong { display: block; font-size: var(--text-sm); }
+    .era-track {
+      height: 64px; border-right: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .era-bar {
+      position: absolute; top: 12px; height: 40px; border-radius: 999px; display: flex; align-items: center;
+      padding-left: 12px; font-size: 12px; font-weight: 700; letter-spacing: .02em; color: #111;
+      white-space: nowrap; overflow: visible;
+    }
+    .rows { min-height: 0; }
+    .name-cell {
+      position: sticky; left: 0; z-index: 2; background: var(--surface); border-right: 1px solid var(--border);
+      border-bottom: 1px solid rgba(255,255,255,.05); padding: .9rem 1rem;
+    }
+    .name { font-weight: 700; color: var(--text); }
+    .meta { font-size: var(--text-xs); color: var(--muted); }
+    .cell {
+      height: 54px; border-right: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid rgba(255,255,255,.05);
+      position: relative; background-image: linear-gradient(to bottom, rgba(255,255,255,.015), rgba(255,255,255,0));
+    }
+    .lifeline {
+      position: absolute; top: 10px; height: 34px; border-radius: 999px; display: flex; align-items: center;
+      padding: 0 12px; font-size: 12px; font-weight: 700; color: #111; white-space: nowrap;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.22);
+    }
+    .lifeline.secondary { top: 28px; height: 10px; border-radius: 999px; padding: 0; opacity: .95; }
+    .notes {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5);
+    }
+    .card h2 { margin: 0 0 .55rem; font-family: var(--font-display); font-size: var(--text-lg); }
+    .card p { margin: 0; color: var(--muted); font-size: var(--text-sm); }
+    .footer { color: var(--faint); font-size: var(--text-xs); margin-top: var(--space-6); }
+    @media (max-width: 720px) {
+      .wrap { padding: var(--space-4); }
+      .toolbar { align-items: flex-start; flex-direction: column; }
+      .chart { min-width: 1540px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <span class="eyebrow">Star Wars canon map</span>
+      <h1>Horizontal timeline from the High Republic to the First Order</h1>
+      <p class="lede">This chart lays the major eras on a single horizontal axis and then places key characters as lifelines beneath it. It is schematic rather than birth-certificate precise, so the bars are meant to show story relevance across eras, not exact day-level canon dates.</p>
+      <div class="legend">
+        <span class="chip"><span class="dot" style="background:var(--high-republic)"></span>High Republic</span>
+        <span class="chip"><span class="dot" style="background:var(--republic)"></span>Republic / Jedi fall</span>
+        <span class="chip"><span class="dot" style="background:var(--empire)"></span>Empire</span>
+        <span class="chip"><span class="dot" style="background:var(--rebellion)"></span>Rebellion</span>
+        <span class="chip"><span class="dot" style="background:var(--new-republic)"></span>New Republic</span>
+        <span class="chip"><span class="dot" style="background:var(--first-order)"></span>First Order</span>
+      </div>
+    </section>
+
+    <section class="timeline-shell panel">
+      <div class="toolbar">
+        <p>The axis runs from roughly 100 BBY to 35 ABY, with the Battle of Yavin at 0. Negative values are BBY and positive values are ABY. Scroll sideways on smaller screens.</p>
+        <p><strong>Reading rule:</strong> thick bars show the period where a character is active in the core story; thin continuation bars show later survival or legacy presence.</p>
+      </div>
+      <div class="viewport">
+        <div class="chart" id="chart"></div>
+      </div>
+    </section>
+
+    <section class="notes">
+      <article class="card">
+        <h2>How to read Jedi</h2>
+        <p>Jedi such as Yoda, Obi-Wan, Anakin, Ahsoka, Luke, and Rey do not all belong to one continuous Jedi Order. The line breaks reflect the collapse of the Republic-era Jedi, the Imperial dark age, Luke’s restoration attempt, and Rey’s later rebuilding phase.</p>
+      </article>
+      <article class="card">
+        <h2>Empire to Rebellion</h2>
+        <p>Cassian Andor, Bix Caleen, and Wilmon Paak sit mainly in the late Empire years, just before the Original Trilogy. Their lifelines are concentrated near 5 BBY to 0 BBY because that is where their story matters most on screen.</p>
+      </article>
+      <article class="card">
+        <h2>Bounty hunters and Mandalorians</h2>
+        <p>Boba Fett begins as a Clone Wars child, then becomes most visible during the Empire and post-Imperial years. Din Djarin belongs almost entirely to the New Republic period after Return of the Jedi.</p>
+      </article>
+      <article class="card">
+        <h2>Legacy generation</h2>
+        <p>Leia, Han, Luke, and later Ben Solo bridge the Rebellion, New Republic, and First Order eras. Rey and Finn arrive at the far right because their main story sits deep in the sequel period.</p>
+      </article>
+    </section>
+
+    <p class="footer">Timeline built as a visual guide to the canon screen era structure, using the standard BBY/ABY framing around the Battle of Yavin.</p>
+  </main>
+
+  <script>
+    const years = [];
+    for (let y = -100; y <= 35; y += 5) years.push(y);
+
+    const eras = [
+      { name: 'High Republic', start: -100, end: -33, color: 'var(--high-republic)' },
+      { name: 'Fall of the Jedi', start: -32, end: -19, color: 'var(--republic)' },
+      { name: 'Reign of the Empire', start: -19, end: 0, color: 'var(--empire)' },
+      { name: 'Age of Rebellion', start: 0, end: 4, color: 'var(--rebellion)' },
+      { name: 'New Republic', start: 5, end: 24, color: 'var(--new-republic)' },
+      { name: 'First Order', start: 25, end: 35, color: 'var(--first-order)' }
+    ];
+
+    const chars = [
+      { name: 'Yoda', meta: 'Jedi Grand Master', start: -100, end: 4, color: '#7fbf5f' },
+      { name: 'Qui-Gon Jinn', meta: 'Late Republic Jedi', start: -80, end: -32, color: '#77b8ff' },
+      { name: 'Obi-Wan Kenobi', meta: 'Republic to Empire bridge', start: -57, end: 9, color: '#66a7ff' },
+      { name: 'Anakin Skywalker', meta: 'Chosen One / Jedi Knight', start: -41, end: -19, color: '#4da6ff', secondary: { start: -19, end: 4, color: '#f06b7a', label: 'Vader' } },
+      { name: 'Ahsoka Tano', meta: 'Clone Wars to New Republic', start: -22, end: 12, color: '#5ec7c7' },
+      { name: 'Palpatine', meta: 'Republic Chancellor to Emperor', start: -52, end: 4, color: '#ef7382' },
+      { name: 'Padmé Amidala', meta: 'Senator / mother of Luke and Leia', start: -46, end: -19, color: '#9ab6ff' },
+      { name: 'Boba Fett', meta: 'Clone child to daimyo', start: -22, end: 11, color: '#e8b04b' },
+      { name: 'Han Solo', meta: 'Smuggler to Resistance veteran', start: -32, end: 34, color: '#ffd166' },
+      { name: 'Leia Organa', meta: 'Princess, senator, general', start: -19, end: 35, color: '#f6c65b' },
+      { name: 'Luke Skywalker', meta: 'Farm boy to Jedi legend', start: -19, end: 35, color: '#ffe27a' },
+      { name: 'Cassian Andor', meta: 'Rebel intelligence operative', start: -26, end: 0, color: '#ff8f6b' },
+      { name: 'Bix Caleen', meta: 'Ferrix resistance network', start: -28, end: 0, color: '#ff9c80' },
+      { name: 'Wilmon Paak', meta: 'Ferrix rebel engineer', start: -15, end: 0, color: '#ffab8f' },
+      { name: 'Din Djarin', meta: 'The Mandalorian', start: 9, end: 12, color: '#4f98a3' },
+      { name: 'Grogu', meta: 'Force-sensitive foundling', start: -19, end: 35, color: '#8ed39a' },
+      { name: 'Ben Solo / Kylo Ren', meta: 'Skywalker legacy fracture', start: 5, end: 35, color: '#ca83f0' },
+      { name: 'Rey', meta: 'Sequel-era Jedi lead', start: 15, end: 35, color: '#c08cf4' },
+      { name: 'Finn', meta: 'Stormtrooper turned Resistance hero', start: 15, end: 35, color: '#d3a1ff' }
+    ];
+
+    const minYear = -100;
+    const maxYear = 35;
+    const totalYears = maxYear - minYear;
+    const cols = totalYears + 1;
+
+    function yearToCol(year) { return Math.max(1, Math.min(cols, year - minYear + 1)); }
+    function span(start, end) { return (end - start) + 1; }
+
+    const chart = document.getElementById('chart');
+
+    const axis = document.createElement('div');
+    axis.className = 'axis';
+    axis.style.gridTemplateColumns = `240px repeat(${cols}, 26px)`;
+    const axisLabel = document.createElement('div');
+    axisLabel.className = 'label-cell';
+    axisLabel.textContent = 'Era / character';
+    axis.appendChild(axisLabel);
+    for (let y = minYear; y <= maxYear; y++) {
+      const c = document.createElement('div');
+      c.className = 'year-cell';
+      c.textContent = y === 0 ? 'Y' : (y < 0 ? `${Math.abs(y)}` : `${y}`);
+      if (y === 0) c.style.color = '#fff';
+      if (y % 5 !== 0) c.textContent = '';
+      axis.appendChild(c);
+    }
+    chart.appendChild(axis);
+
+    const eraRow = document.createElement('div');
+    eraRow.className = 'era-grid';
+    eraRow.style.gridTemplateColumns = `240px repeat(${cols}, 26px)`;
+    const eraLabel = document.createElement('div');
+    eraLabel.className = 'era-label label-cell';
+    eraLabel.innerHTML = '<strong>Galactic eras</strong><span style="color:var(--muted);font-size:12px;">High Republic → First Order</span>';
+    eraRow.appendChild(eraLabel);
+    for (let i = 0; i < cols; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'era-track';
+      eraRow.appendChild(cell);
+    }
+    chart.appendChild(eraRow);
+
+    const eraTracks = eraRow.querySelectorAll('.era-track');
+    eras.forEach(era => {
+      const start = yearToCol(era.start) - 1;
+      const end = yearToCol(era.end) - 1;
+      const bar = document.createElement('div');
+      bar.className = 'era-bar';
+      bar.style.left = `${start * 26}px`;
+      bar.style.width = `${(end - start + 1) * 26 - 4}px`;
+      bar.style.background = era.color;
+      bar.textContent = era.name;
+      eraTracks[0].appendChild(bar);
+    });
+
+    chars.forEach(ch => {
+      const row = document.createElement('div');
+      row.className = 'rows';
+      row.style.gridTemplateColumns = `240px repeat(${cols}, 26px)`;
+
+      const name = document.createElement('div');
+      name.className = 'name-cell';
+      name.innerHTML = `<div class="name">${ch.name}</div><div class="meta">${ch.meta}</div>`;
+      row.appendChild(name);
+
+      for (let i = 0; i < cols; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        row.appendChild(cell);
+      }
+
+      const cells = row.querySelectorAll('.cell');
+      const bar = document.createElement('div');
+      bar.className = 'lifeline';
+      bar.style.left = `${(yearToCol(ch.start)-1) * 26}px`;
+      bar.style.width = `${span(ch.start, ch.end) * 26 - 4}px`;
+      bar.style.background = ch.color;
+      bar.textContent = `${ch.start < 0 ? Math.abs(ch.start)+' BBY' : ch.start+' ABY'} → ${ch.end <= 0 ? (ch.end === 0 ? '0 / Yavin' : Math.abs(ch.end)+' BBY') : ch.end+' ABY'}`;
+      cells[0].appendChild(bar);
+
+      if (ch.secondary) {
+        const s = document.createElement('div');
+        s.className = 'lifeline secondary';
+        s.style.left = `${(yearToCol(ch.secondary.start)-1) * 26}px`;
+        s.style.width = `${span(ch.secondary.start, ch.secondary.end) * 26 - 4}px`;
+        s.style.background = ch.secondary.color;
+        s.title = ch.secondary.label;
+        cells[0].appendChild(s);
+      }
+
+      chart.appendChild(row);
+    });
+  </script>
+</body>
+</html>
