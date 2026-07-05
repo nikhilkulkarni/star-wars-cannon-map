@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Star Wars Canon vs Release Timeline Matrix</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #f3f0ec; --color-border: #d4d1ca; --color-divider: #dcd9d5;
+      --color-text: #28251d; --color-text-muted: #77756f; --color-text-faint: #aba8a2; --color-primary: #01696f; --color-primary-soft: #cedcd8; --color-blue: #006494; --color-gold: #d19900; --color-purple: #7a39bb;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(30,26,18,.06); --shadow-md: 0 5px 18px rgba(30,26,18,.08); --shadow-lg: 0 14px 32px rgba(30,26,18,.12);
+      --font-display: 'Cabinet Grotesk', 'Inter', sans-serif; --font-body: 'Satoshi', 'Inter', sans-serif;
+      --canon-cell: 36px; --release-row: 80px; --story-label: 260px;
+      --hr: #6daa45; --fj: #5591c7; --emp: #dd6974; --reb: #edb336; --new: #4f98a3; --fo: #a86fdf;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #23211f; --color-border: #393836; --color-divider: #262523;
+      --color-text: #cdccca; --color-text-muted: #979590; --color-text-faint: #696765; --color-primary: #4f98a3; --color-primary-soft: #313b3b; --color-blue: #5591c7; --color-gold: #e8af34; --color-purple: #a86fdf;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.2); --shadow-md: 0 5px 18px rgba(0,0,0,.3); --shadow-lg: 0 14px 32px rgba(0,0,0,.38);
+      --hr: #7eb85a; --fj: #63a1d8; --emp: #dd6974; --reb: #edb336; --new: #4f98a3; --fo: #b081e5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh; font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text); line-height: 1.55;
+      background:
+        radial-gradient(circle at top right, color-mix(in oklab, var(--color-primary) 12%, transparent), transparent 26%),
+        radial-gradient(circle at top left, color-mix(in oklab, var(--color-purple) 8%, transparent), transparent 22%),
+        var(--color-bg);
+    }
+    button { cursor: pointer; border: none; background: none; color: inherit; font: inherit; }
+    .shell { max-width: 1600px; margin: 0 auto; padding: var(--space-6); }
+    .header { position: sticky; top: 0; z-index: 120; backdrop-filter: blur(16px); background: color-mix(in oklab, var(--color-bg) 84%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 76%, transparent); }
+    .header-inner { max-width: 1600px; margin: 0 auto; padding: .9rem var(--space-6); display: flex; justify-content: space-between; gap: var(--space-4); align-items: center; }
+    .brand { display: flex; align-items: center; gap: .8rem; }
+    .logo { width: 34px; height: 34px; color: var(--color-primary); }
+    .brand h1 { font-family: var(--font-display); font-size: 1.06rem; margin-bottom: .1rem; }
+    .brand p { font-size: var(--text-xs); color: var(--color-text-muted); }
+    .header-actions { display: flex; gap: .65rem; flex-wrap: wrap; justify-content: flex-end; }
+    .btn { min-height: 44px; padding: .72rem .95rem; border-radius: 999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: var(--text-sm); }
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .hero { display: grid; gap: var(--space-6); padding: var(--space-10) 0 var(--space-8); }
+    .eyebrow { display: inline-flex; width: fit-content; gap: .5rem; align-items: center; padding: .45rem .75rem; border: 1px solid var(--color-border); border-radius: 999px; background: color-mix(in oklab, var(--color-primary) 9%, var(--color-surface)); color: var(--color-primary); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; }
+    .hero h2 { font-family: var(--font-display); font-size: var(--text-2xl); line-height: .96; max-width: 13ch; }
+    .hero p { max-width: 78ch; color: var(--color-text-muted); }
+    .grid-brief { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--space-4); }
+    .brief { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm); }
+    .brief strong { display: block; margin-bottom: .35rem; font-family: var(--font-display); font-size: var(--text-lg); }
+    .brief span { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: calc(var(--radius-xl) + 2px); box-shadow: var(--shadow-lg); overflow: hidden; }
+    .panel-head { display: flex; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-divider); background: color-mix(in oklab, var(--color-surface-2) 88%, var(--color-primary) 12%); }
+    .panel-head p { color: var(--color-text-muted); font-size: var(--text-sm); max-width: 76ch; }
+    .viewport { overflow: auto; max-height: 72vh; position: relative; isolation: isolate; }
+    .timeline-shell { width: max-content; min-width: 100%; }
+    .canon-grid { width: max-content; }
+    .axis-row { display: grid; grid-template-columns: var(--story-label) repeat(136, var(--canon-cell)); position: sticky; top: 0; z-index: 80; background: var(--color-surface-2); border-bottom: 1px solid var(--color-divider); }
+    .axis-left, .axis-year, .story-label-cell { border-right: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent); }
+    .axis-left, .story-label-cell { position: sticky; left: 0; z-index: 95; background: inherit; box-shadow: 12px 0 20px rgba(0,0,0,.10); }
+    [data-theme="dark"] .axis-left, [data-theme="dark"] .story-label-cell { box-shadow: 12px 0 20px rgba(0,0,0,.24); }
+    .axis-left { padding: .9rem 1rem; font-size: var(--text-sm); }
+    .axis-year { padding: .8rem .2rem; text-align: center; font-size: var(--text-xs); color: var(--color-text-muted); }
+    .story-row { display: grid; grid-template-columns: var(--story-label) repeat(136, var(--canon-cell)); }
+    .story-label-cell { padding: 1rem; background: var(--color-surface); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 55%, transparent); }
+    .story-name { font-weight: 700; color: var(--color-text); }
+    .story-meta { color: var(--color-text-muted); font-size: var(--text-xs); margin-top: .18rem; }
+    .canon-cell { height: var(--release-row); border-right: 1px solid color-mix(in oklab, var(--color-border) 50%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 50%, transparent); position: relative; background-image: linear-gradient(to bottom, color-mix(in oklab, var(--color-surface-2) 50%, transparent), transparent); }
+    .story-band { position: absolute; top: 16px; height: 46px; border-radius: 16px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 700; color: #111; box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), 0 4px 12px rgba(0,0,0,.10); cursor: pointer; white-space: nowrap; }
+    .story-band:hover, .matrix-card:hover { transform: translateY(-1px); }
+    .marker { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in oklab, var(--color-primary) 36%, transparent); z-index: 70; pointer-events: none; }
+    .marker.current { width: 2px; background: color-mix(in oklab, var(--color-primary) 60%, transparent); }
+    .swap-shell { position: relative; }
+    .swapped-board { display: none; width: max-content; min-width: 100%; }
+    .swap-shell.swapped .canon-grid { display: none; }
+    .swap-shell.swapped .swapped-board { display: block; }
+    .swap-grid { display: grid; grid-template-columns: 160px repeat(28, 170px); width: max-content; }
+    .swap-top, .swap-side { position: sticky; background: var(--color-surface-2); z-index: 80; border-right: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent); }
+    .swap-top { top: 0; padding: .85rem .7rem; text-align: center; font-size: var(--text-xs); color: var(--color-text-muted); }
+    .swap-side { left: 0; z-index: 90; padding: 1rem; min-height: 130px; display: flex; align-items: center; font-size: var(--text-sm); }
+    .swap-corner { position: sticky; top: 0; left: 0; z-index: 100; padding: .95rem; background: var(--color-surface-2); border-right: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent); }
+    .swap-cell { min-height: 130px; padding: .6rem; border-right: 1px solid color-mix(in oklab, var(--color-border) 45%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 45%, transparent); background: var(--color-surface); }
+    .mini-card { width: 100%; height: 100%; border: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent); border-radius: 14px; padding: .65rem; background: color-mix(in oklab, var(--color-surface-2) 86%, transparent); display: grid; gap: .22rem; }
+    .mini-card strong { font-size: 12px; }
+    .mini-card span { font-size: 11px; color: var(--color-text-muted); }
+    .matrix-wrap { margin-top: var(--space-8); }
+    .matrix-head { margin-bottom: var(--space-4); }
+    .matrix-head h3 { font-family: var(--font-display); font-size: var(--text-xl); margin-bottom: .35rem; }
+    .matrix-head p { color: var(--color-text-muted); max-width: 72ch; }
+    .matrix-grid { display: grid; grid-template-columns: 200px repeat(4, minmax(220px,1fr)); border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+    .matrix-corner, .matrix-colhead, .matrix-rowhead, .matrix-cell { border-right: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent); }
+    .matrix-corner, .matrix-colhead, .matrix-rowhead { background: color-mix(in oklab, var(--color-surface-2) 88%, var(--color-primary) 12%); }
+    .matrix-corner, .matrix-colhead { padding: 1rem; }
+    .matrix-colhead strong, .matrix-rowhead strong { font-family: var(--font-display); }
+    .matrix-rowhead { padding: 1rem; min-height: 220px; display: flex; align-items: center; }
+    .matrix-cell { min-height: 220px; padding: .9rem; background: var(--color-surface); }
+    .matrix-stack { display: grid; gap: .7rem; }
+    .matrix-card { padding: .8rem; border-radius: 16px; border: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent); box-shadow: var(--shadow-sm); cursor: pointer; }
+    .matrix-card strong { display: block; margin-bottom: .25rem; font-size: var(--text-sm); color: #111; }
+    .matrix-card span { display: block; font-size: var(--text-xs); color: rgba(17,17,17,.78); }
+    .detail { display: grid; grid-template-columns: 1.1fr .9fr; gap: var(--space-4); margin-top: var(--space-8); }
+    .detail-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm); }
+    .detail-card h3 { font-family: var(--font-display); font-size: var(--text-lg); margin-bottom: .45rem; }
+    .detail-card p { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .list { display: grid; gap: .7rem; margin-top: .95rem; }
+    .list-item { padding: .78rem .9rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-2); }
+    .list-item strong { display: block; margin-bottom: .18rem; }
+    @media (max-width: 1100px) {
+      .shell, .header-inner { padding-inline: var(--space-4); }
+      .grid-brief, .detail { grid-template-columns: 1fr; }
+      :root, [data-theme="light"], [data-theme="dark"] { --story-label: 220px; --canon-cell: 32px; }
+      .panel-head { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 64 64" fill="none" aria-label="Timeline matrix logo">
+          <rect x="10" y="12" width="44" height="40" rx="10" stroke="currentColor" stroke-width="3"></rect>
+          <path d="M10 26h44M26 12v40" stroke="currentColor" stroke-width="3"></path>
+        </svg>
+        <div>
+          <h1>Star Wars canon vs release matrix</h1>
+          <p>Chronology-first story rows, swapable axes, and a canon-date vs release-date quadrant view</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="swapAxes">Swap axes</button>
+        <button class="btn" id="jumpYavin">Jump to Yavin</button>
+        <button class="btn" id="themeToggle" aria-label="Switch theme">☾</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <span class="eyebrow">Dual timeline explorer</span>
+      <h2>Canon years on one axis, release history on the other</h2>
+      <p>This page separates two different questions: when a story happens in canon, and when Lucasfilm released it. The top module lists stories in canon order with the horizontal axis set to BBY/ABY years, and the swap button flips the layout so canon years become columns and stories become movable tiles in a transposed board [page:1][web:61].</p>
+      <div class="grid-brief">
+        <article class="brief"><strong>Section 1</strong><span>A scrollable story-by-story canon timeline with rows organized by date of happening in canon and labelled with release year [page:1].</span></article>
+        <article class="brief"><strong>Section 2</strong><span>A single button swaps the x and y logic so you can inspect the same data in a transposed view without leaving the page [page:1].</span></article>
+        <article class="brief"><strong>Section 3</strong><span>A 2x2 matrix groups titles by broad canon-era bucket on the x axis and release-era bucket on the y axis, shown as story cards [page:1].</span></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <p>The source list follows StarWars.com’s published chronological viewing order for the major screen canon, including the official notes that <em>Andor</em> and <em>Rebels</em> happen concurrently before <em>Rogue One</em>, and that <em>Resistance</em> begins before <em>The Force Awakens</em> and continues after it [page:1].</p>
+        <p style="font-size:var(--text-xs);color:var(--color-text-muted);">Click any band or card to see details below.</p>
+      </div>
+      <div class="viewport" id="timelineViewport">
+        <div class="timeline-shell swap-shell" id="swapShell">
+          <div class="canon-grid" id="canonGrid"></div>
+          <div class="swapped-board" id="swappedBoard"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="matrix-wrap">
+      <div class="matrix-head">
+        <h3>Canon-date × release-date table</h3>
+        <p>The x axis groups stories by where they sit in canon, while the y axis groups them by release period. Each cell shows story cards that belong to that pair of buckets. This is a simplified 2x2-style concept expanded to a practical 4x4 table so the clustering remains legible across the full screen canon [page:1].</p>
+      </div>
+      <div class="matrix-grid" id="matrixGrid"></div>
+    </section>
+
+    <section class="detail">
+      <article class="detail-card">
+        <h3 id="detailTitle">Select a story</h3>
+        <p id="detailCopy">Use the timeline bands or matrix cards to inspect where each title sits in both canon chronology and release history.</p>
+      </article>
+      <aside class="detail-card">
+        <h3>Reference notes</h3>
+        <div class="list">
+          <div class="list-item"><strong>Chronological anchor</strong><span>The Battle of Yavin remains the BBY/ABY pivot for canon dating [web:61].</span></div>
+          <div class="list-item"><strong>Anthology caveat</strong><span><em>Tales of the Jedi</em>, <em>Tales of the Empire</em>, and <em>Tales of the Underworld</em> span wide ranges because they are anthology series [page:1].</span></div>
+          <div class="list-item"><strong>Screen-canon scope</strong><span>This visualization focuses on the major films and series listed in the official viewing guide rather than every novel, comic, or game [page:1].</span></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const stories = [
+        { name: 'The Acolyte', release: 2024, canonStart: -100, canonEnd: -95, releaseBucket: '2020s', canonBucket: 'Early canon', color: 'var(--hr)', detail: 'The Acolyte is the earliest major live-action screen story in the official chronological guide [page:1].' },
+        { name: 'The Phantom Menace', release: 1999, canonStart: -32, canonEnd: -32, releaseBucket: '1999–2008', canonBucket: 'Prequel / Republic', color: 'var(--fj)', detail: 'Episode I opens the fall of the Republic and Anakin’s story [page:1].' },
+        { name: 'Attack of the Clones', release: 2002, canonStart: -22, canonEnd: -22, releaseBucket: '1999–2008', canonBucket: 'Prequel / Republic', color: 'var(--fj)', detail: 'Episode II escalates the Republic crisis into war [page:1].' },
+        { name: 'The Clone Wars (movie)', release: 2008, canonStart: -22, canonEnd: -22, releaseBucket: '1999–2008', canonBucket: 'Prequel / Republic', color: 'var(--fj)', detail: 'The Clone Wars movie sits at the opening of the series-era war arc [page:1].' },
+        { name: 'The Clone Wars (series)', release: 2008, canonStart: -22, canonEnd: -19, releaseBucket: '1999–2008', canonBucket: 'Prequel / Republic', color: 'var(--fj)', detail: 'The series covers the war years that transform the Jedi into wartime generals [page:1].' },
+        { name: 'Tales of the Jedi', release: 2022, canonStart: -45, canonEnd: -18, releaseBucket: '2020s', canonBucket: 'Prequel / Republic', color: 'var(--fj)', detail: 'Tales of the Jedi spans a broad stretch of time in anthology form [page:1].' },
+        { name: 'Revenge of the Sith', release: 2005, canonStart: -19, canonEnd: -19, releaseBucket: '1999–2008', canonBucket: 'Prequel / Republic', color: 'var(--fj)', detail: 'Episode III turns the Republic into the Empire and Anakin into Vader [page:1].' },
+        { name: 'Tales of the Empire', release: 2024, canonStart: -19, canonEnd: -5, releaseBucket: '2020s', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'Tales of the Empire stretches across the Imperial period [page:1].' },
+        { name: 'Tales of the Underworld', release: 2025, canonStart: -19, canonEnd: 2, releaseBucket: '2020s', canonBucket: 'Empire / Rebellion', color: '#f08b62', detail: 'Tales of the Underworld also spans multiple points on the canon line [page:1].' },
+        { name: 'The Bad Batch', release: 2021, canonStart: -19, canonEnd: -16, releaseBucket: '2020s', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'The Bad Batch belongs to the immediate aftermath of the Republic’s fall [page:1].' },
+        { name: 'Maul – Shadow Lord', release: 2026, canonStart: -17, canonEnd: -17, releaseBucket: '2020s', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'The official guide places Maul – Shadow Lord in the early Empire run [page:1].' },
+        { name: 'Solo', release: 2018, canonStart: -13, canonEnd: -10, releaseBucket: '2014–2019', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'Solo covers Han’s pre-Rebellion smuggler years [page:1].' },
+        { name: 'Obi-Wan Kenobi', release: 2022, canonStart: -9, canonEnd: -9, releaseBucket: '2020s', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'Obi-Wan Kenobi sits in the deep Imperial dark times [page:1].' },
+        { name: 'Andor', release: 2022, canonStart: -5, canonEnd: -1, releaseBucket: '2020s', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'Andor leads directly toward Rogue One [page:1].' },
+        { name: 'Rebels', release: 2014, canonStart: -5, canonEnd: -1, releaseBucket: '2014–2019', canonBucket: 'Empire / Rebellion', color: '#f07e86', detail: 'Rebels runs concurrently with Andor before Rogue One [page:1].' },
+        { name: 'Rogue One', release: 2016, canonStart: 0, canonEnd: 0, releaseBucket: '2014–2019', canonBucket: 'Empire / Rebellion', color: 'var(--emp)', detail: 'Rogue One ends where A New Hope begins [page:1].' },
+        { name: 'A New Hope', release: 1977, canonStart: 0, canonEnd: 0, releaseBucket: '1977–1983', canonBucket: 'Empire / Rebellion', color: 'var(--reb)', detail: 'A New Hope is the Battle of Yavin anchor for BBY/ABY [page:1][web:61].' },
+        { name: 'The Empire Strikes Back', release: 1980, canonStart: 3, canonEnd: 3, releaseBucket: '1977–1983', canonBucket: 'Empire / Rebellion', color: 'var(--reb)', detail: 'Episode V follows the Rebellion under heavy pressure [page:1].' },
+        { name: 'Return of the Jedi', release: 1983, canonStart: 4, canonEnd: 4, releaseBucket: '1977–1983', canonBucket: 'Empire / Rebellion', color: 'var(--reb)', detail: 'Episode VI concludes the original trilogy [page:1].' },
+        { name: 'The Mandalorian', release: 2019, canonStart: 9, canonEnd: 12, releaseBucket: '2014–2019', canonBucket: 'New Republic', color: 'var(--new)', detail: 'The Mandalorian belongs to the unstable post-Imperial New Republic period [page:1].' },
+        { name: 'The Book of Boba Fett', release: 2021, canonStart: 9, canonEnd: 12, releaseBucket: '2020s', canonBucket: 'New Republic', color: '#66aeb8', detail: 'The Book of Boba Fett shares the same post-Return of the Jedi cluster [page:1].' },
+        { name: 'Ahsoka', release: 2023, canonStart: 9, canonEnd: 12, releaseBucket: '2020s', canonBucket: 'New Republic', color: '#76bcc5', detail: 'Ahsoka extends the New Republic thread [page:1].' },
+        { name: 'Skeleton Crew', release: 2024, canonStart: 9, canonEnd: 12, releaseBucket: '2020s', canonBucket: 'New Republic', color: '#87c8cf', detail: 'Skeleton Crew sits in the same New Republic grouping in the official order [page:1].' },
+        { name: 'The Mandalorian and Grogu', release: 2026, canonStart: 12, canonEnd: 12, releaseBucket: '2020s', canonBucket: 'New Republic', color: 'var(--new)', detail: 'The official guide places The Mandalorian and Grogu after Skeleton Crew in the New Republic era [page:1].' },
+        { name: 'Resistance', release: 2018, canonStart: 33, canonEnd: 35, releaseBucket: '2014–2019', canonBucket: 'First Order', color: 'var(--fo)', detail: 'Resistance starts before The Force Awakens and extends past it [page:1].' },
+        { name: 'The Force Awakens', release: 2015, canonStart: 34, canonEnd: 34, releaseBucket: '2014–2019', canonBucket: 'First Order', color: 'var(--fo)', detail: 'Episode VII introduces Rey, Finn, and the First Order as the central conflict [page:1].' },
+        { name: 'The Last Jedi', release: 2017, canonStart: 34, canonEnd: 34, releaseBucket: '2014–2019', canonBucket: 'First Order', color: '#b081e5', detail: 'Episode VIII continues almost immediately after Episode VII [page:1].' },
+        { name: 'The Rise of Skywalker', release: 2019, canonStart: 35, canonEnd: 35, releaseBucket: '2014–2019', canonBucket: 'First Order', color: '#c191ed', detail: 'Episode IX completes the sequel trilogy [page:1].' }
+      ].sort((a, b) => a.canonStart - b.canonStart || a.release - b.release);
+
+      const detailTitle = document.getElementById('detailTitle');
+      const detailCopy = document.getElementById('detailCopy');
+      const themeToggle = document.getElementById('themeToggle');
+      const root = document.documentElement;
+      let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', theme);
+      const syncTheme = () => themeToggle.textContent = theme === 'dark' ? '☀︎' : '☾';
+      syncTheme();
+      themeToggle.addEventListener('click', () => { theme = theme === 'dark' ? 'light' : 'dark'; root.setAttribute('data-theme', theme); syncTheme(); });
+
+      const minYear = -100, maxYear = 35, cols = maxYear - minYear + 1;
+      const canonGrid = document.getElementById('canonGrid');
+      const swappedBoard = document.getElementById('swappedBoard');
+      const timelineViewport = document.getElementById('timelineViewport');
+      const swapShell = document.getElementById('swapShell');
+      const canonCell = () => parseFloat(getComputedStyle(root).getPropertyValue('--canon-cell'));
+      const storyLabel = () => parseFloat(getComputedStyle(root).getPropertyValue('--story-label'));
+      const yearToIndex = y => y - minYear;
+      const leftFor = y => yearToIndex(y) * canonCell();
+      const widthFor = (start, end) => ((end - start) + 1) * canonCell() - 4;
+
+      function setDetail(item) {
+        detailTitle.textContent = item.name;
+        detailCopy.innerHTML = `${item.detail} <br><br><strong>Release year:</strong> ${item.release}. <strong>Canon span:</strong> ${item.canonStart < 0 ? Math.abs(item.canonStart)+' BBY' : item.canonStart+' ABY'} → ${item.canonEnd < 0 ? Math.abs(item.canonEnd)+' BBY' : item.canonEnd+' ABY'}.`;
+      }
+
+      function buildCanonGrid() {
+        const axis = document.createElement('div');
+        axis.className = 'axis-row';
+        const left = document.createElement('div');
+        left.className = 'axis-left';
+        left.innerHTML = '<strong>Stories ordered by canon date</strong><div style="font-size:12px;color:var(--color-text-muted);margin-top:.15rem;">Row labels include release year</div>';
+        axis.appendChild(left);
+        for (let y = minYear; y <= maxYear; y++) {
+          const c = document.createElement('div');
+          c.className = 'axis-year';
+          c.textContent = y % 5 === 0 ? (y < 0 ? `${Math.abs(y)}` : `${y}`) : '';
+          if (y === 0) c.innerHTML = '<strong>Y</strong>';
+          axis.appendChild(c);
+        }
+        canonGrid.appendChild(axis);
+
+        stories.forEach(story => {
+          const row = document.createElement('div');
+          row.className = 'story-row';
+          const label = document.createElement('div');
+          label.className = 'story-label-cell';
+          label.innerHTML = `<div class="story-name">${story.name}</div><div class="story-meta">Release ${story.release} · Canon ${story.canonStart < 0 ? Math.abs(story.canonStart)+' BBY' : story.canonStart+' ABY'}${story.canonEnd !== story.canonStart ? ' → ' + (story.canonEnd < 0 ? Math.abs(story.canonEnd)+' BBY' : story.canonEnd+' ABY') : ''}</div>`;
+          row.appendChild(label);
+          for (let i = 0; i < cols; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'canon-cell';
+            row.appendChild(cell);
+          }
+          const cells = row.querySelectorAll('.canon-cell');
+          const band = document.createElement('button');
+          band.type = 'button';
+          band.className = 'story-band';
+          band.style.left = `${leftFor(story.canonStart)}px`;
+          band.style.width = `${widthFor(story.canonStart, story.canonEnd)}px`;
+          band.style.background = story.color;
+          band.innerHTML = `<span>${story.name}</span>`;
+          band.addEventListener('click', () => setDetail(story));
+          cells[0].appendChild(band);
+          canonGrid.appendChild(row);
+        });
+
+        [0, 9, 34].forEach(y => {
+          const marker = document.createElement('div');
+          marker.className = `marker ${y === 0 ? 'current' : ''}`;
+          marker.style.left = `${storyLabel() + leftFor(y)}px`;
+          canonGrid.appendChild(marker);
+        });
+      }
+
+      function buildSwappedBoard() {
+        const rowLabels = stories.map(s => s.name);
+        const colYears = [];
+        for (let y = minYear; y <= maxYear; y += 5) colYears.push(y);
+        const grid = document.createElement('div');
+        grid.className = 'swap-grid';
+        const corner = document.createElement('div');
+        corner.className = 'swap-corner';
+        corner.innerHTML = '<strong>Swapped axes</strong><div style="font-size:12px;color:var(--color-text-muted);margin-top:.18rem;">Years become columns</div>';
+        grid.appendChild(corner);
+        colYears.forEach(y => {
+          const head = document.createElement('div');
+          head.className = 'swap-top';
+          head.innerHTML = `<strong>${y === 0 ? 'Yavin' : y < 0 ? Math.abs(y)+' BBY' : y+' ABY'}</strong>`;
+          grid.appendChild(head);
+        });
+
+        stories.forEach(story => {
+          const side = document.createElement('div');
+          side.className = 'swap-side';
+          side.innerHTML = `<div><strong>${story.name}</strong><div style="font-size:12px;color:var(--color-text-muted);margin-top:.22rem;">Released ${story.release}</div></div>`;
+          grid.appendChild(side);
+          colYears.forEach(y => {
+            const cell = document.createElement('div');
+            cell.className = 'swap-cell';
+            const overlaps = y >= story.canonStart && y <= story.canonEnd;
+            if (overlaps) {
+              const card = document.createElement('button');
+              card.type = 'button';
+              card.className = 'mini-card';
+              card.style.background = story.color;
+              card.innerHTML = `<strong>${story.name}</strong><span>${story.canonStart < 0 ? Math.abs(story.canonStart)+' BBY' : story.canonStart+' ABY'}${story.canonEnd !== story.canonStart ? ' → ' + (story.canonEnd < 0 ? Math.abs(story.canonEnd)+' BBY' : story.canonEnd+' ABY') : ''}</span><span>Release ${story.release}</span>`;
+              card.addEventListener('click', () => setDetail(story));
+              cell.appendChild(card);
+            }
+            grid.appendChild(cell);
+          });
+        });
+        swappedBoard.appendChild(grid);
+      }
+
+      function buildMatrix() {
+        const matrixGrid = document.getElementById('matrixGrid');
+        const canonBuckets = ['Early canon', 'Prequel / Republic', 'Empire / Rebellion', 'New Republic', 'First Order'];
+        const releaseBuckets = ['1977–1983', '1999–2008', '2014–2019', '2020s'];
+        const colorMap = {
+          'Early canon': 'var(--hr)',
+          'Prequel / Republic': 'var(--fj)',
+          'Empire / Rebellion': 'var(--emp)',
+          'New Republic': 'var(--new)',
+          'First Order': 'var(--fo)'
+        };
+
+        const corner = document.createElement('div');
+        corner.className = 'matrix-corner';
+        corner.innerHTML = '<strong>Release date ↓<br>Canon date →</strong>';
+        matrixGrid.appendChild(corner);
+        canonBuckets.forEach(bucket => {
+          const head = document.createElement('div');
+          head.className = 'matrix-colhead';
+          head.innerHTML = `<strong>${bucket}</strong>`;
+          matrixGrid.appendChild(head);
+        });
+
+        releaseBuckets.forEach(rBucket => {
+          const rowHead = document.createElement('div');
+          rowHead.className = 'matrix-rowhead';
+          rowHead.innerHTML = `<strong>${rBucket}</strong>`;
+          matrixGrid.appendChild(rowHead);
+          canonBuckets.forEach(cBucket => {
+            const cell = document.createElement('div');
+            cell.className = 'matrix-cell';
+            const stack = document.createElement('div');
+            stack.className = 'matrix-stack';
+            stories.filter(s => s.releaseBucket === rBucket && s.canonBucket === cBucket).forEach(story => {
+              const card = document.createElement('button');
+              card.type = 'button';
+              card.className = 'matrix-card';
+              card.style.background = story.color;
+              card.innerHTML = `<strong>${story.name}</strong><span>Release ${story.release}</span><span>${story.canonStart < 0 ? Math.abs(story.canonStart)+' BBY' : story.canonStart+' ABY'}${story.canonEnd !== story.canonStart ? ' → ' + (story.canonEnd < 0 ? Math.abs(story.canonEnd)+' BBY' : story.canonEnd+' ABY') : ''}</span>`;
+              card.addEventListener('click', () => setDetail(story));
+              stack.appendChild(card);
+            });
+            if (!stack.children.length) {
+              const empty = document.createElement('div');
+              empty.style.fontSize = '12px';
+              empty.style.color = 'var(--color-text-faint)';
+              empty.textContent = 'No major screen entry in this pairing.';
+              stack.appendChild(empty);
+            }
+            cell.appendChild(stack);
+            matrixGrid.appendChild(cell);
+          });
+        });
+      }
+
+      buildCanonGrid();
+      buildSwappedBoard();
+      buildMatrix();
+      setDetail(stories[0]);
+
+      document.getElementById('swapAxes').addEventListener('click', () => {
+        swapShell.classList.toggle('swapped');
+      });
+      document.getElementById('jumpYavin').addEventListener('click', () => {
+        timelineViewport.scrollTo({ left: Math.max(0, storyLabel() + leftFor(0) - 140), behavior: 'smooth' });
+      });
+    })();
+  </script>
+</body>
+</html>
